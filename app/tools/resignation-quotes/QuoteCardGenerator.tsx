@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { downloadCanvasAsPng } from "@/lib/canvasImage";
+import { saveOrShareCanvas } from "@/lib/canvasImage";
 import { drawQuoteCard } from "@/lib/quoteCardImage";
+import { QrShareCard } from "@/components/ui/QrShareCard";
 import data from "@/data/templates/resignation-quotes.json";
 
 export function QuoteCardGenerator() {
@@ -13,6 +14,7 @@ export function QuoteCardGenerator() {
   const [customText, setCustomText] = useState("");
   const [themeKey, setThemeKey] = useState(data.themes[0].key);
   const [saved, setSaved] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ export function QuoteCardGenerator() {
     setQuote(next);
     setUseCustom(false);
     setSaved(false);
+    setShareUrl(null);
   }
 
   const theme = data.themes.find((t) => t.key === themeKey) ?? data.themes[0];
@@ -31,12 +34,28 @@ export function QuoteCardGenerator() {
     ? customText.trim() || "나만의 한마디를 적어보세요"
     : quote ?? "";
 
-  function handleSaveImage() {
+  async function handleSaveImage() {
     if (!canvasRef.current) return;
     drawQuoteCard(canvasRef.current, displayedQuote, theme);
-    downloadCanvasAsPng(canvasRef.current, "퇴사-명언-카드.png");
+    const result = await saveOrShareCanvas(
+      canvasRef.current,
+      "퇴사-명언-카드.png",
+      "퇴사 명언 카드"
+    );
+    if (result === "cancelled") return;
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  }
+
+  function handleShowQr() {
+    if (!displayedQuote) return;
+    const params = new URLSearchParams({
+      q: displayedQuote,
+      t: theme.key,
+    });
+    setShareUrl(
+      `${window.location.origin}/tools/resignation-quotes/share?${params.toString()}`
+    );
   }
 
   return (
@@ -63,7 +82,10 @@ export function QuoteCardGenerator() {
           <button
             key={t.key}
             type="button"
-            onClick={() => setThemeKey(t.key)}
+            onClick={() => {
+              setThemeKey(t.key);
+              setShareUrl(null);
+            }}
             aria-pressed={themeKey === t.key}
             className={`rounded-full px-3 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 ${
               themeKey === t.key
@@ -81,7 +103,10 @@ export function QuoteCardGenerator() {
           다른 문구 보기
         </Button>
         <Button
-          onClick={() => setUseCustom((v) => !v)}
+          onClick={() => {
+            setUseCustom((v) => !v);
+            setShareUrl(null);
+          }}
           variant={useCustom ? "primary" : "secondary"}
           className="flex-1"
         >
@@ -92,7 +117,10 @@ export function QuoteCardGenerator() {
       {useCustom && (
         <textarea
           value={customText}
-          onChange={(e) => setCustomText(e.target.value)}
+          onChange={(e) => {
+            setCustomText(e.target.value);
+            setShareUrl(null);
+          }}
           placeholder="나만의 한마디를 적어보세요"
           rows={3}
           className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
@@ -104,6 +132,12 @@ export function QuoteCardGenerator() {
       <Button onClick={handleSaveImage} disabled={!displayedQuote}>
         {saved ? "저장됐어요 ✓" : "이미지로 저장하기"}
       </Button>
+
+      <Button onClick={handleShowQr} variant="ghost" disabled={!displayedQuote}>
+        📱 QR로 내 폰에 저장하기
+      </Button>
+
+      {shareUrl && <QrShareCard url={shareUrl} />}
 
       <p className="text-xs text-zinc-500">
         참고용 문구이며 재미로 즐기는 콘텐츠입니다.

@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { drawLottoCard } from "@/lib/lottoImage";
-import { downloadCanvasAsPng } from "@/lib/canvasImage";
+import { saveOrShareCanvas } from "@/lib/canvasImage";
+import { QrShareCard } from "@/components/ui/QrShareCard";
 
 const MESSAGES = [
   "퇴사도 결심했는데, 인생역전이라고 못할 건 없죠.",
@@ -73,6 +74,7 @@ export function LottoGenerator() {
   const [bonusFlicker, setBonusFlicker] = useState(0);
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const timeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
   const flickerInterval = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -103,6 +105,7 @@ export function LottoGenerator() {
     setLockedCount(0);
     setPhase("drawing");
     setSaved(false);
+    setShareUrl(null);
     setMessage(MESSAGES[Math.floor(Math.random() * MESSAGES.length)]);
 
     flickerInterval.current = setInterval(() => {
@@ -142,13 +145,29 @@ export function LottoGenerator() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function handleSaveImage() {
+  async function handleSaveImage() {
     if (phase !== "done" || bonus === null || !canvasRef.current) return;
     const sorted = [...drawOrder].sort((a, b) => a - b);
     drawLottoCard(canvasRef.current, sorted, bonus, message);
-    downloadCanvasAsPng(canvasRef.current, "퇴사-기념-행운번호.png");
+    const result = await saveOrShareCanvas(
+      canvasRef.current,
+      "퇴사-기념-행운번호.png",
+      "퇴사 기념 행운번호"
+    );
+    if (result === "cancelled") return;
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  }
+
+  function handleShowQr() {
+    if (phase !== "done" || bonus === null) return;
+    const sorted = [...drawOrder].sort((a, b) => a - b);
+    const params = new URLSearchParams({
+      n: sorted.join(","),
+      b: String(bonus),
+      m: message,
+    });
+    setShareUrl(`${window.location.origin}/tools/lotto-numbers/share?${params.toString()}`);
   }
 
   const isDrawn = drawOrder.length > 0;
@@ -233,6 +252,16 @@ export function LottoGenerator() {
           {saved ? "저장됐어요 ✓" : "이미지로 저장하기"}
         </Button>
       </div>
+
+      <Button
+        onClick={handleShowQr}
+        variant="ghost"
+        disabled={phase !== "done"}
+      >
+        📱 QR로 내 폰에 저장하기
+      </Button>
+
+      {shareUrl && <QrShareCard url={shareUrl} />}
 
       <Disclaimer kinds={["lotto"]} />
     </div>
