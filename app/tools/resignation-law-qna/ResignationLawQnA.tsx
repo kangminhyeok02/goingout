@@ -6,7 +6,7 @@ import { Disclaimer } from "@/components/ui/Disclaimer";
 import data from "@/data/templates/resignation-law-qna.json";
 
 export function ResignationLawQnA() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   function toggle(i: number) {
     setOpenIndex((cur) => (cur === i ? null : i));
