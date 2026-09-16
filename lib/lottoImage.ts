@@ -3,7 +3,7 @@ import { wrapText } from "./canvasImage";
 // 동행복권 실제 공 색상 기준 (1-10 노랑, 11-20 파랑, 21-30 빨강, 31-40 회색, 41-45 초록)
 const BALL_HEX = ["#facc15", "#38bdf8", "#f87171", "#a1a1aa", "#34d399"];
 
-function hexForNumber(n: number): string {
+export function hexForNumber(n: number): string {
   if (n <= 10) return BALL_HEX[0];
   if (n <= 20) return BALL_HEX[1];
   if (n <= 30) return BALL_HEX[2];
