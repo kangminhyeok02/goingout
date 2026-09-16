@@ -305,7 +305,7 @@ export function LottoGenerator() {
 
             {filledCount === 0 && (
               <div className="pointer-events-none absolute left-full top-1 ml-2 flex animate-bounce items-center gap-1 whitespace-nowrap rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-amber-900 shadow-lg">
-                👈 눌러서 뽑기
+                👈 레버 눌러서 뽑기
               </div>
             )}
           </div>
