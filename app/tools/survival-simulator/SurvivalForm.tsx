@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { calculateSurvival, type SurvivalResult } from "@/lib/calculators/survival";
 import { Card } from "@/components/ui/Card";
 import { Button, LinkButton } from "@/components/ui/Button";
@@ -12,8 +13,11 @@ function formatWon(value: number): string {
 }
 
 export function SurvivalForm() {
+  const searchParams = useSearchParams();
   const [currentSavings, setCurrentSavings] = useState("");
-  const [severancePay, setSeverancePay] = useState("");
+  const [severancePay, setSeverancePay] = useState(
+    () => searchParams.get("severancePay") ?? ""
+  );
   const [monthlyExpense, setMonthlyExpense] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [result, setResult] = useState<SurvivalResult | null>(null);
@@ -65,6 +69,11 @@ export function SurvivalForm() {
               placeholder="퇴직금 계산기 결과를 입력해보세요"
               className="rounded-lg border border-zinc-300 px-3 py-2"
             />
+            {searchParams.get("severancePay") && (
+              <span className="text-xs text-teal-600">
+                퇴직금 계산기에서 가져온 값이에요. 필요하면 수정해도 돼요.
+              </span>
+            )}
           </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-zinc-700">월 고정 지출 (원)</span>

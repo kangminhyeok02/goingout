@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { calculateSeverance, type SeveranceResult } from "@/lib/calculators/severance";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Button, LinkButton } from "@/components/ui/Button";
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { DateDigitsInput } from "@/components/ui/DateDigitsInput";
 
@@ -114,6 +114,17 @@ export function SeveranceForm() {
                 <dt>1일 평균임금(추정)</dt>
                 <dd className="text-right">{formatWon(result.dailyAverageWage)}</dd>
               </dl>
+              <div className="mt-3 flex flex-col gap-2 rounded-xl bg-teal-50 p-4">
+                <p className="text-sm text-teal-800">
+                  이 퇴직금을 기반으로 생존 시뮬레이터를 돌려보시겠어요?
+                </p>
+                <LinkButton
+                  href={`/tools/survival-simulator?severancePay=${result.severancePay}`}
+                  className="self-start"
+                >
+                  생존 시뮬레이터 돌려보기 →
+                </LinkButton>
+              </div>
             </>
           ) : (
             <p className="text-sm text-zinc-700">
