@@ -15,28 +15,75 @@ interface ChatMsg {
 
 const kakaoFinderUrl = buildSearchUrl("google", "대한노무사회 노무사 찾기");
 
+type CallPhase = "idle" | "calling" | "connected";
+
+function formatCallTime(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
 export function LaborConsultantChat() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>(() => [
     { id: "m-0", sender: "bot", text: persona.greeting },
   ]);
   const [input, setInput] = useState("");
+  const [callPhase, setCallPhase] = useState<CallPhase>("idle");
+  const [callSeconds, setCallSeconds] = useState(0);
+  const [muted, setMuted] = useState(false);
+  const [speakerOn, setSpeakerOn] = useState(false);
   const idRef = useRef(0);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const connectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function nextId(): string {
     idRef.current += 1;
     return `m-${idRef.current}`;
   }
 
+  function startCall() {
+    setCallPhase("calling");
+    setCallSeconds(0);
+    setMuted(false);
+    setSpeakerOn(false);
+    // 실제 전화 연결 시도 (모바일 브라우저에서는 전화 앱으로 넘어가요)
+    window.location.href = `tel:${persona.phoneNumber}`;
+    connectTimeoutRef.current = setTimeout(() => {
+      setCallPhase("connected");
+      callIntervalRef.current = setInterval(() => {
+        setCallSeconds((s) => s + 1);
+      }, 1000);
+    }, 1800);
+  }
+
+  function endCall() {
+    if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+    if (callIntervalRef.current) clearInterval(callIntervalRef.current);
+    connectTimeoutRef.current = null;
+    callIntervalRef.current = null;
+    setCallPhase("idle");
+  }
+
+  useEffect(() => {
+    return () => {
+      if (connectTimeoutRef.current) clearTimeout(connectTimeoutRef.current);
+      if (callIntervalRef.current) clearInterval(callIntervalRef.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        if (callPhase !== "idle") endCall();
+        else setOpen(false);
+      }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open]);
+  }, [open, callPhase]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -73,9 +120,57 @@ export function LaborConsultantChat() {
           aria-labelledby="labor-consultant-title"
         >
           <div
-            className="flex h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl animate-modal-in sm:h-[80vh] sm:rounded-2xl"
+            className="relative flex h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl animate-modal-in sm:h-[80vh] sm:rounded-2xl"
             onClick={(e) => e.stopPropagation()}
           >
+            {callPhase !== "idle" && (
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-between bg-gradient-to-b from-zinc-900 to-zinc-800 px-8 py-12 text-white animate-fade-in">
+                <div className="flex flex-col items-center gap-2 pt-8">
+                  <p className="text-sm text-zinc-300">
+                    {callPhase === "calling" ? "연결 중..." : formatCallTime(callSeconds)}
+                  </p>
+                  <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white/10 text-5xl">
+                    {persona.avatar}
+                  </div>
+                  <p className="mt-2 text-xl font-semibold">{persona.personaName}</p>
+                  <p className="text-xs text-zinc-400">{persona.phoneDisplay}</p>
+                </div>
+
+                <div className="flex flex-col items-center gap-8 pb-4">
+                  <div className="flex items-center gap-6">
+                    <button
+                      type="button"
+                      onClick={() => setMuted((v) => !v)}
+                      aria-pressed={muted}
+                      className={`flex h-14 w-14 items-center justify-center rounded-full text-xl transition-colors ${
+                        muted ? "bg-white text-zinc-900" : "bg-white/15 hover:bg-white/25"
+                      }`}
+                    >
+                      🔇
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSpeakerOn((v) => !v)}
+                      aria-pressed={speakerOn}
+                      className={`flex h-14 w-14 items-center justify-center rounded-full text-xl transition-colors ${
+                        speakerOn ? "bg-white text-zinc-900" : "bg-white/15 hover:bg-white/25"
+                      }`}
+                    >
+                      🔊
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={endCall}
+                    aria-label="통화 종료"
+                    className="flex h-16 w-16 items-center justify-center rounded-full bg-red-600 text-2xl shadow-lg hover:bg-red-700"
+                  >
+                    <span className="inline-block rotate-[135deg]">📞</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
               <div>
                 <p id="labor-consultant-title" className="font-semibold text-zinc-900">
@@ -94,12 +189,13 @@ export function LaborConsultantChat() {
             </div>
 
             <div className="flex flex-wrap gap-2 border-b border-zinc-100 px-5 py-3">
-              <a
-                href={`tel:${persona.phoneNumber}`}
+              <button
+                type="button"
+                onClick={startCall}
                 className="rounded-full bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 hover:bg-teal-100"
               >
                 📞 전화하기
-              </a>
+              </button>
               <a
                 href={`sms:${persona.phoneNumber}`}
                 className="rounded-full bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-700 hover:bg-teal-100"
