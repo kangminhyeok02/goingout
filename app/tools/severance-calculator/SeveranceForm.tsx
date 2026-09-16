@@ -5,6 +5,7 @@ import { calculateSeverance, type SeveranceResult } from "@/lib/calculators/seve
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Disclaimer } from "@/components/ui/Disclaimer";
+import { DateDigitsInput } from "@/components/ui/DateDigitsInput";
 
 function formatWon(value: number): string {
   return `${value.toLocaleString("ko-KR")}원`;
@@ -49,20 +50,18 @@ export function SeveranceForm() {
         <Card className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-zinc-700">입사일</span>
-            <input
-              type="date"
+            <DateDigitsInput
               value={hireDate}
-              onChange={(e) => setHireDate(e.target.value)}
+              onChange={setHireDate}
               className="rounded-lg border border-zinc-300 px-3 py-2"
               required
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-zinc-700">퇴사(예정)일</span>
-            <input
-              type="date"
+            <DateDigitsInput
               value={resignDate}
-              onChange={(e) => setResignDate(e.target.value)}
+              onChange={setResignDate}
               className="rounded-lg border border-zinc-300 px-3 py-2"
               required
             />
