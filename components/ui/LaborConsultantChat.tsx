@@ -48,8 +48,6 @@ export function LaborConsultantChat() {
     setCallSeconds(0);
     setMuted(false);
     setSpeakerOn(false);
-    // 실제 전화 연결 시도 (모바일 브라우저에서는 전화 앱으로 넘어가요)
-    window.location.href = `tel:${persona.phoneNumber}`;
     connectTimeoutRef.current = setTimeout(() => {
       setCallPhase("connected");
       callIntervalRef.current = setInterval(() => {
