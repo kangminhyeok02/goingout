@@ -1,9 +1,11 @@
 import { TOOL_GROUPS, getToolsByGroup } from "@/data/tools";
 import { ToolCard } from "@/components/ui/ToolCard";
+import { WelcomeModal } from "@/components/ui/WelcomeModal";
 
 export default function Home() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+      <WelcomeModal />
       <section className="mb-10 sm:mb-14">
         <h1 className="text-2xl font-bold text-zinc-900 sm:text-4xl">
           퇴사, 혼자 고민하지 마세요
