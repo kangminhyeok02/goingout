@@ -76,6 +76,15 @@ export const TOOLS: ToolMeta[] = [
     group: "prepare",
   },
   {
+    slug: "resignation-law-qna",
+    title: "퇴사 법률 Q&A",
+    shortDescription: "자주 묻는 퇴사 관련 법률 질문 모음",
+    pageDescription:
+      "사표 수리, 인수인계 의무, 퇴직금 지급 기한, 실업급여 등 퇴사 전후 자주 묻는 법률 질문과 답변을 모아뒀어요. 일반적인 정보 제공용이며 법적 조언을 대체하지 않아요.",
+    emoji: "⚖️",
+    group: "prepare",
+  },
+  {
     slug: "reason-phrasing",
     title: "퇴사 사유 화법",
     shortDescription: "채팅으로 나에게 맞는 통보 화법 찾기",
@@ -94,12 +103,57 @@ export const TOOLS: ToolMeta[] = [
     group: "execute",
   },
   {
+    slug: "handover-guide",
+    title: "인수인계 가이드",
+    shortDescription: "직무별 체크리스트와 복사용 문서 템플릿",
+    pageDescription:
+      "개발, 기획/PM, 디자인, 마케팅, 영업/CS, 인사/총무, 재무/회계 등 직무별 인수인계 체크리스트와 바로 복사해서 쓸 수 있는 인수인계서 템플릿, 추천 협업 툴을 모아뒀어요.",
+    emoji: "🗂️",
+    group: "execute",
+  },
+  {
+    slug: "farewell-guide",
+    title: "퇴사 인사 가이드",
+    shortDescription: "시점별·관계별 인사 멘트 추천",
+    pageDescription:
+      "퇴사 1주 전부터 퇴사 후 개별 연락까지, 시점별로 팀장/동료/후배 등 관계에 맞는 인사 멘트를 추천해드려요. 마음에 드는 문구는 바로 복사해서 쓰세요.",
+    emoji: "👋",
+    group: "execute",
+  },
+  {
     slug: "post-resignation-planner",
     title: "퇴사 후 플래너",
     shortDescription: "다음 목표를 위한 체크리스트",
     pageDescription:
       "이직/휴식/창업 등 목표 유형에 맞는 템플릿 체크리스트를 고르고, 나만의 항목을 추가해 진행률을 관리하세요. 이 브라우저에 저장돼요.",
     emoji: "🧭",
+    group: "afterlife",
+  },
+  {
+    slug: "unemployment-benefit",
+    title: "실업급여 셀프 체크",
+    shortDescription: "수급요건 확인 + 대략적 예상 수급액 계산",
+    pageDescription:
+      "이직 사유, 가입기간, 평균임금을 입력하면 실업급여(구직급여) 수급요건 충족 여부와 대략적인 예상 수급액을 계산해드려요. 실제 수급액은 고용센터 심사에 따라 달라질 수 있어요.",
+    emoji: "🧾",
+    group: "afterlife",
+  },
+  {
+    slug: "insurance-tax-guide",
+    title: "4대보험·세금 정리 가이드",
+    shortDescription: "건강보험·연금·고용보험·퇴직소득세 한눈에",
+    pageDescription:
+      "퇴사 후 건강보험 임의계속가입, 국민연금 납부예외, 고용보험 실업급여 신청, 퇴직소득세 과세이연 등 알아두면 좋은 4대보험·세금 정보를 정리했어요.",
+    emoji: "🛡️",
+    group: "afterlife",
+  },
+  {
+    slug: "new-job-adaptation",
+    title: "새 회사 적응 꿀팁",
+    shortDescription: "시기별 로드맵 + 관계별 적응 팁",
+    pageDescription:
+      "입사 1주차부터 6개월까지 시기별 로드맵과 상사/동료/후배 등 관계별 적응 팁을 모아뒀어요. 참고할 만한 영상도 바로 검색해서 찾아볼 수 있어요.",
+    emoji: "🌱",
     group: "afterlife",
   },
   {

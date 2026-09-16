@@ -1,4 +1,4 @@
-export type SearchEngine = "google" | "naver" | "naver-news";
+export type SearchEngine = "google" | "naver" | "naver-news" | "youtube";
 
 export interface CompanySearchCategory {
   key: string;
@@ -67,6 +67,8 @@ export function buildSearchUrl(engine: SearchEngine, query: string): string {
       return `https://search.naver.com/search.naver?query=${q}`;
     case "naver-news":
       return `https://search.naver.com/search.naver?where=news&query=${q}`;
+    case "youtube":
+      return `https://www.youtube.com/results?search_query=${q}`;
     case "google":
     default:
       return `https://www.google.com/search?q=${q}`;
