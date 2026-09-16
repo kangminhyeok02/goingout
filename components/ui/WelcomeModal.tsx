@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { TOOL_GROUPS, getToolsByGroup } from "@/data/tools";
 import { loadFromStorage, saveToStorage } from "@/lib/storage";
+import { useSidebar } from "@/components/layout/SidebarContext";
 
 const STORAGE_KEY = "welcome-modal-seen";
 
 export function WelcomeModal() {
   const [open, setOpen] = useState(false);
+  const { toggle: toggleSidebar } = useSidebar();
 
   useEffect(() => {
     const seen = loadFromStorage(STORAGE_KEY, false);
@@ -29,6 +31,11 @@ export function WelcomeModal() {
   function close() {
     setOpen(false);
     saveToStorage(STORAGE_KEY, true);
+  }
+
+  function closeAndOpenMenu() {
+    close();
+    toggleSidebar();
   }
 
   if (!open) return null;
@@ -98,8 +105,8 @@ export function WelcomeModal() {
           })}
         </div>
 
-        <Button onClick={close} className="mt-6 w-full">
-          둘러보기 시작 →
+        <Button onClick={closeAndOpenMenu} className="mt-6 w-full">
+          메뉴에서 둘러보기 →
         </Button>
       </div>
     </div>
