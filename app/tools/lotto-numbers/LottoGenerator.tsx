@@ -286,21 +286,29 @@ export function LottoGenerator() {
             />
           </div>
 
-          <button
-            type="button"
-            onClick={pullLever}
-            disabled={pulling || isDone}
-            aria-label="레버 당기기"
-            className="flex flex-col items-center gap-0 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <span
-              ref={leverArmRef}
-              className="relative block h-14 w-2 origin-bottom rounded bg-gradient-to-b from-zinc-100 to-zinc-400"
+          <div className="relative">
+            <button
+              type="button"
+              onClick={pullLever}
+              disabled={pulling || isDone}
+              aria-label="레버 당기기"
+              className="flex flex-col items-center gap-0 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span className="absolute -top-2.5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full bg-red-500 shadow" />
-            </span>
-            <span className="-mt-0.5 h-3.5 w-10 rounded-md bg-zinc-600" />
-          </button>
+              <span
+                ref={leverArmRef}
+                className="relative block h-14 w-2 origin-bottom rounded bg-gradient-to-b from-zinc-100 to-zinc-400"
+              >
+                <span className="absolute -top-2.5 left-1/2 h-5 w-5 -translate-x-1/2 rounded-full bg-red-500 shadow" />
+              </span>
+              <span className="-mt-0.5 h-3.5 w-10 rounded-md bg-zinc-600" />
+            </button>
+
+            {filledCount === 0 && (
+              <div className="pointer-events-none absolute left-full top-1 ml-2 flex animate-bounce items-center gap-1 whitespace-nowrap rounded-full bg-amber-400 px-2.5 py-1 text-xs font-bold text-amber-900 shadow-lg">
+                👈 눌러서 뽑기
+              </div>
+            )}
+          </div>
 
           <button
             type="button"
